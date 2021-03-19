@@ -1,2 +1,3 @@
 aiohttp
 rtcbot
+opencv-python
