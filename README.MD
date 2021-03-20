@@ -5,3 +5,6 @@ RTC Streaming code from: https://rtcbot.readthedocs.io/en/latest/examples/stream
 
 
 Speech-to-text code from: https://cloud.google.com/speech-to-text/docs/streaming-recognize#speech-streaming-recognize-python
+
+
+sudo apt-get install python-pyaudio
