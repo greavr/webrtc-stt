@@ -5,6 +5,7 @@ import { IoService } from '../services/io.service';
 import { WaveformComponent } from '../waveform/waveform.component';
 import { EventService } from '../services/event.service';
 import { FulfillmentService } from '../services/fulfillment.service';
+// import {ChatService} from "../services/chat.service";
 
 // declare const RecordRTC: any;?
 // declare const StereoAudioRecorder: any;
@@ -24,7 +25,8 @@ export class ChatComponent{
   constructor(
     public fulfillmentService: FulfillmentService,
     public ioService: IoService,
-    public eventService: EventService
+    public eventService: EventService,
+    // private chatService: ChatService
   ) {
     let me = this;
     me.startDisabled = false;
@@ -41,7 +43,6 @@ export class ChatComponent{
 
   onStart() {
     let me = this;
-    console.log('me', me);
     me.startDisabled = true;
     // make use of HTML 5/WebRTC, JavaScript getUserMedia()
     // to capture the browser microphone stream
@@ -51,7 +52,7 @@ export class ChatComponent{
 
       me.recordAudio = RecordRTC(stream, {
         type: 'audio',
-        mimeType: 'audio/webm',
+        mimeType: 'audio/mpeg',
         sampleRate: 44100, // this sampleRate should be the same in your server code
 
         // MediaStreamRecorder, StereoAudioRecorder, WebAssemblyRecorder
@@ -75,7 +76,7 @@ export class ChatComponent{
         desiredSampRate: 16000,
 
         // as soon as the stream is available
-        ondataavailable(blob) {
+        ondataavailable(blob: Blob) {
           if(!me.eventService.getIsPlaying()) {
             console.log('i can hear you', blob);
             me.ioService.sendBinaryStream(blob);

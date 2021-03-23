@@ -58,14 +58,16 @@
  * Zone JS is required by default for Angular itself.
  */
 import 'zone.js/dist/zone';  // Included with Angular CLI.
+// import 'socket.io-stream';
 // Add global to window, assigning the value of window itself.
 (window as any).global = window;
-(window as any).process = window;
-(window as any).process.browser = true;
-(window as any).process.version = '';
-(window as any).process.versions = {node: false};
-declare var global: any;
-declare var require: any;
+global.process = require('process');
+// (window as any).process = window;
+// (window as any).process.browser = true;
+// (window as any).process.version = '';
+// (window as any).process.versions = {node: false};
+// (window as any).process.nextTick = require('next-tick');
+// declare var require: any;
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 

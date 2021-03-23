@@ -14,7 +14,8 @@ import { WaveformComponent } from './waveform/waveform.component';
 import {EventService} from "./services/event.service";
 import {FulfillmentService} from "./services/fulfillment.service";
 import {IoService} from "./services/io.service";
-import {SocketOne} from "./services/socket.service";
+// import {SocketOne} from "./services/socket.service";
+import {ChatService} from "./services/chat.service";
 
 const config: SocketIoConfig = { url: 'http://localhost:8888', options: {transports:['websocket']}};
 
@@ -30,14 +31,15 @@ const config: SocketIoConfig = { url: 'http://localhost:8888', options: {transpo
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    // SocketIoModule.forRoot(config),
+    SocketIoModule.forRoot(config),
     ReactiveFormsModule
   ],
   providers: [
     EventService,
     FulfillmentService,
     IoService,
-    SocketOne
+    // ChatService,
+    // SocketOne
   ],
   bootstrap: [AppComponent]
 })

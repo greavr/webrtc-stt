@@ -6,7 +6,6 @@ import {MeetingComponent} from "./meeting/meeting.component";
 
 const routes: Routes = [
   { path: '', component: AppComponent},
-  { path: 'chat', component: ChatComponent},
   { path: 'meeting', component: MeetingComponent}
 ];
 

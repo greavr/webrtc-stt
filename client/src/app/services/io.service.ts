@@ -1,15 +1,17 @@
 
-// import {Socket} from "ngx-socket-io";
-import {io} from 'socket.io-client'
+import {Socket} from "ngx-socket-io";
 import {Injectable} from "@angular/core";
-import {SocketOne} from "./socket.service";
+const ss = require('socket.io-stream');
+
+// declare const ss:any;
+
 @Injectable({
   providedIn: 'root'
 })
 export class IoService {
   public lang: string;
 
-  constructor(private socket: SocketOne) {
+  constructor(private socket: Socket) {
     // // @ts-ignore
     // this.socketio = new io('http://localhost:8888');
     // this.socket = this.socketio.on('connect', function() {
@@ -28,29 +30,29 @@ export class IoService {
   }
 
   sendBinaryStream(blob: any) {
-    // const me = this;
-    // const stream = ss.createStream();
-    // stream directly to server
+// stream directly to server
     // it will be temp. stored locally
-    // ss(me.socket).emit('stream-speech', stream, {
-    //   name: '_temp/stream.wav',
-    //   size: blob.size,
-    //   language: me.lang
+    // this.socket.emit('event', 'test')
+    console.log(blob);
+    // this.socket.emit('stream', )
+    // this.socket.emit('stream',
+    //   { blob
+    //   })
+    let stream = ss.createStream();
+    console.log('blobstream', ss.createBlobReadStream(blob));
+    this.socket.emit('stream', stream, {name:'stream.mp3', size:blob.size});
+    ss.createBlobReadStream(blob).pipe(stream);
+    // console.log('fuckin stream', stream);
+    // ss(this.socket).emit('stream', stream, {
+    //   name: 'stream.wav',
+    //   size: blob.size
     // });
     // pipe the audio blob to the read stream
     // ss.createBlobReadStream(blob).pipe(stream);
-
-    console.log('in send', this.socket);
-    // this.socket.on('connection', ()=>{
-    //   console.log('inside connection');
-    // })
-    //   this.socket.emit('event', {data: 'fuckEvent'}, data => console.log(data));
-    // this.socket.emit('chat', {data: 'fuckChat'}, data => console.log(data));
-    // this.socket.emit('message', {data: 'fuckMessage'}, data => console.log(data));
   }
 
   sendMessage(eventName: string, obj: any) {
-    obj.audio.language = this.lang;
+    // obj.audio.language = this.lang;
     this.socket.emit(eventName, obj);
   }
 

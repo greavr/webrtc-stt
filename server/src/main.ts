@@ -26,12 +26,18 @@ async function bootstrap() {
     cors: true,
   });
   // app.useWebSocketAdapter(new WsAdapter(app));
+  app.useWebSocketAdapter(new IoAdapter(app));
   // app.use(cors());
   // app.use(helmet());
   // app.useWebSocketAdapter(new RedisIoAdapter(app));
 
   // console.log('Port', process.env.PORT);
   await app.listen(8888);
+
+  // if (module.hot) {
+  //   module.hot.accept();
+  //   module.hot.dispose(() => app.close());
+  // }
 }
 
 bootstrap();
