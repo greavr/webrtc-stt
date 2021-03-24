@@ -1,6 +1,5 @@
 # Angular10 Nestjs stack
 
-
 ## Client
     cd client
     npm i 
@@ -15,6 +14,11 @@
   Running into an issue with the stream to the server
   and then piping it to the Google STT API
   
+### Why this implementation?
+FullStack implementation of commonly used web tech
+FrontEnd - Angular 10  
+BackEnd - NestJS 
+
 ### Credits
 Lee Boonstra  
 https://medium.com/google-cloud/building-your-own-conversational-voice-ai-with-dialogflow-speech-to-text-in-web-apps-part-i-b92770bd8b47

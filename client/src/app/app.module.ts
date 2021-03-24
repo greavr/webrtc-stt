@@ -14,10 +14,14 @@ import { WaveformComponent } from './waveform/waveform.component';
 import {EventService} from "./services/event.service";
 import {FulfillmentService} from "./services/fulfillment.service";
 import {IoService} from "./services/io.service";
-// import {SocketOne} from "./services/socket.service";
-import {ChatService} from "./services/chat.service";
 
-const config: SocketIoConfig = { url: 'http://localhost:8888', options: {transports:['websocket']}};
+const config: SocketIoConfig = {
+  url: 'http://localhost:8888/stream',
+  options: {
+    transports:['websocket'],
+    binaryType:'arrayBuffer'},
+
+};
 
 @NgModule({
   declarations: [
@@ -38,8 +42,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8888', options: {transpo
     EventService,
     FulfillmentService,
     IoService,
-    // ChatService,
-    // SocketOne
   ],
   bootstrap: [AppComponent]
 })

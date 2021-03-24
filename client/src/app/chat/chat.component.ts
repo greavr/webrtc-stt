@@ -1,15 +1,10 @@
 import { Component,  Input } from '@angular/core';
 import RecordRTC from 'recordrtc';
-
 import { IoService } from '../services/io.service';
 import { WaveformComponent } from '../waveform/waveform.component';
 import { EventService } from '../services/event.service';
 import { FulfillmentService } from '../services/fulfillment.service';
-// import {ChatService} from "../services/chat.service";
 
-// declare const RecordRTC: any;?
-// declare const StereoAudioRecorder: any;
-let StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -26,7 +21,6 @@ export class ChatComponent{
     public fulfillmentService: FulfillmentService,
     public ioService: IoService,
     public eventService: EventService,
-    // private chatService: ChatService
   ) {
     let me = this;
     me.startDisabled = false;
@@ -49,15 +43,15 @@ export class ChatComponent{
     navigator.mediaDevices.getUserMedia({
       audio: true
     }).then(function(stream: MediaStream) {
-
+      // StereoAudioRecorder.isTypeSupported('audio/mpeg');
       me.recordAudio = RecordRTC(stream, {
         type: 'audio',
-        mimeType: 'audio/mpeg',
+        mimeType: 'audio/wav',
         sampleRate: 44100, // this sampleRate should be the same in your server code
 
         // MediaStreamRecorder, StereoAudioRecorder, WebAssemblyRecorder
         // CanvasRecorder, GifRecorder, WhammyRecorder
-        recorderType: StereoAudioRecorder,
+        recorderType: RecordRTC.StereoAudioRecorder,
 
         // Dialogflow / STT requires mono audio
         numberOfAudioChannels: 1,
@@ -76,9 +70,8 @@ export class ChatComponent{
         desiredSampRate: 16000,
 
         // as soon as the stream is available
-        ondataavailable(blob: Blob) {
-          if(!me.eventService.getIsPlaying()) {
-            console.log('i can hear you', blob);
+        ondataavailable(blob: any) {
+          if (!me.eventService.getIsPlaying()) {
             me.ioService.sendBinaryStream(blob);
             me.waveform.visualize();
           }
