@@ -1,0 +1,32 @@
+2021-04-07 16:47:21,063 DEBUG    root            Loaded Command Group: ['gcloud', 'config']
+2021-04-07 16:47:21,066 DEBUG    root            Loaded Command Group: ['gcloud', 'config', 'config_helper']
+2021-04-07 16:47:21,068 DEBUG    root            Running [gcloud.config.config-helper] with arguments: [--format: "json"]
+2021-04-07 16:47:21,084 DEBUG    google.auth.transport.requests Making request: GET http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/1054803596720-compute@developer.gserviceaccount.com/?recursive=true
+2021-04-07 16:47:21,087 DEBUG    urllib3.connectionpool Starting new HTTP connection (1): metadata.google.internal:80
+2021-04-07 16:47:21,091 DEBUG    urllib3.connectionpool http://metadata.google.internal:80 "GET /computeMetadata/v1/instance/service-accounts/1054803596720-compute@developer.gserviceaccount.com/?recursive=true HTTP/1.1" 200 198
+2021-04-07 16:47:21,092 DEBUG    google.auth.transport.requests Making request: GET http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/1054803596720-compute@developer.gserviceaccount.com/token
+2021-04-07 16:47:21,095 DEBUG    urllib3.connectionpool http://metadata.google.internal:80 "GET /computeMetadata/v1/instance/service-accounts/1054803596720-compute@developer.gserviceaccount.com/token HTTP/1.1" 200 259
+2021-04-07 16:47:21,215 INFO     root            Display format: "default json"
+2021-04-07 16:47:21,282 INFO     ___FILE_ONLY___ {
+  "configuration": {
+    "active_configuration": "default",
+    "properties": {
+      "core": {
+        "account": "1054803596720-compute@developer.gserviceaccount.com",
+        "disable_usage_reporting": "True",
+        "project": "altostrat-sandbox"
+      }
+    }
+  },
+  "credential": {
+    "access_token": "ya29.c.KpgB-gcl3aCdkHtorWw-gopnq4nUoUK2hD4ex6Gobxa2_rkl52OzixZPpqj_1U7iWhCMRvrdC4kWwwqL2uvq-xxfJsHEKE3cgnkhrKWevl7FKfSW0-CeEwCcg8Cc1dSAPf95v0hiDwNoQ-uvuqHdSd92mOrVRayr1Qzg4MO918OAJsjWrVIz1NFwaLFj6m060NgTowZ4Fvz78Pg",
+    "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImUxYWMzOWI2Y2NlZGEzM2NjOGNhNDNlOWNiYzE0ZjY2ZmFiODVhNGMiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiIzMjU1NTk0MDU1OS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6IjExNTg1MDY4Njk3OTg3NjE4NzIyMSIsImV4cCI6MTYxNzgxNzY0MSwiaWF0IjoxNjE3ODE0MDQxLCJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJzdWIiOiIxMTU4NTA2ODY5Nzk4NzYxODcyMjEifQ.K-ZQLqrJ06jK5ZShq2J7CAnX1JzjUeQqFsgXCMzLK88cLQWw6zplkLnY4Eie1bU2aG-E14j1pikZV0sHGh2XJfs7Bq6G_OfFDcx5RVdOWB2nYSCWAl_aQBWt2J4MoNJcqhvUR38o_j3hxDfmv_VCddpQWGP64ECVO6-UkmD_-zBbgR9s_qfWaFhRTtkYuBYlcSbHe7wMUvhfTfIjx33C6n3ZBIOexgBz_dEkjQ_Vp40HNl6XEogtDZEB29XSf0-q6ZHWFPf-NKPsiJI32FSfzlixeu3oBdH8anv60PvBX_uNYO11alBxo7M6ZBYLBbNbYO-pf3YhzKJNzTI4x1RYxA",
+    "token_expiry": "2021-04-07T17:25:44Z"
+  },
+  "sentinels": {
+    "config_sentinel": "/home/jazz405/.config/gcloud/config_sentinel"
+  }
+}
+2021-04-07 16:47:21,282 INFO     ___FILE_ONLY___ 
+
+2021-04-07 16:47:21,282 DEBUG    root            SDK update checks are disabled.

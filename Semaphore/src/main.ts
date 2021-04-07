@@ -3,12 +3,21 @@ import { AppModule } from './app.module';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as fs from 'fs';
+<<<<<<< HEAD
 import * as path from 'path';
 
 declare const module: any;
 const httpsOptions = {
   key: fs.readFileSync(path.resolve(__dirname, './asset/key.pem')),
   cert: fs.readFileSync(path.resolve(__dirname, './asset/cert.pem')),
+=======
+import * as  path from 'path';
+
+declare const module: any;
+const httpsOptions = {
+  key: fs.readFileSync(path.resolve(__dirname,'./asset/key.pem')),
+  cert: fs.readFileSync(path.resolve(__dirname,'./asset/cert.pem')),
+>>>>>>> ea178cb74276b781d31104cd4a84c4d8e5d8d8f4
   passphrase: 'panda',
 };
 
