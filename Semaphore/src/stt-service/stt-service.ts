@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const speech = require('@google-cloud/speech');
 const sttClient = new speech.SpeechClient();

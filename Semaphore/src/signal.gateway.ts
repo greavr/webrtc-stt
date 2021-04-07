@@ -10,6 +10,8 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { SttService } from './stt-service/stt-service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const speech = require('@google-cloud/speech');
 const sttClient = new speech.SpeechClient();
 
@@ -17,6 +19,7 @@ const sttClient = new speech.SpeechClient();
 export class SignalGateway
   implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection {
   private logger: Logger = new Logger('SignalGateway');
+  private sttService: SttService = new SttService();
 
   @WebSocketServer()
   server: Server;
@@ -89,33 +92,12 @@ export class SignalGateway
   @SubscribeMessage('media')
   handleMedia(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: any,
+    @MessageBody() stream: any,
   ): void {
-    console.log('data?', data);
-    const sttRequest = {
-      config: {
-        sampleRateHertz: 16000,
-        encoding: 'LINEAR16',
-        languageCode: 'en-US',
-      },
-    };
-
-    const recognizeStream = sttClient
-      .streamingRecognize(sttRequest)
-      .on('data', (data) => {
-        console.log('fuckind data', data.results[0].alternatives[0]);
-        // cb(data.results[0].alternatives[0]);
-      })
-      .on('error', (e: any) => {
-        console.log('ERROR:', e);
-      })
-      .on('end', () => {
-        console.log('on end');
-      });
-
-    stream.pipe(recognizeStream);
-    stream.on('end', () => {
-      this.logger.log('STREAM ENDED');
+    console.log('MEDIA');
+    this.sttService.speechToText(stream, (data) => {
+      console.log('hello', data);
+      console.log('otherHello', data.results[0].alternatives[0]);
     });
   }
 }

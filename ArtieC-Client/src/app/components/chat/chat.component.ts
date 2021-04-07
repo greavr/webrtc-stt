@@ -133,7 +133,9 @@ export class ChatComponent implements OnInit {
 
         // as soon as the stream is available
         ondataavailable(blob: any): void {
-          me.socket.send('media', blob);
+          if (this.peerConnection.connectionState === 'connected'){
+            me.socket.send('media', blob);
+          }
         }
       });
       me.recordAudio.startRecording();
