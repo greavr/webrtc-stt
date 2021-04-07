@@ -3,11 +3,13 @@ import { AppModule } from './app.module';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as fs from 'fs';
+import * as  path from 'path';
 
 declare const module: any;
 const httpsOptions = {
-  key: fs.readFileSync('./secrets/private-key.pem'),
-  cert: fs.readFileSync('./secrets/public-certificate.pem'),
+  key: fs.readFileSync(path.resolve(__dirname,'./asset/key.pem')),
+  cert: fs.readFileSync(path.resolve(__dirname,'./asset/cert.pem')),
+  passphrase: 'panda',
 };
 
 async function bootstrap() {
