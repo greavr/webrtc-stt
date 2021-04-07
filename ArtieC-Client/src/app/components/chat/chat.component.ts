@@ -133,7 +133,7 @@ export class ChatComponent implements OnInit {
 
         // as soon as the stream is available
         ondataavailable(blob: any): void {
-          if (this.peerConnection.connectionState === 'connected'){
+          if (me.peerConnection.connectionState === 'connected'){
             me.socket.send('media', blob);
           }
         }
