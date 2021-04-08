@@ -246,3 +246,99 @@ npm start
 y
 ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true
 y
+ls
+cd ArtieC-Client/
+ls
+cd src/
+ls
+cd app/
+ls
+nano app.module.ts 
+cd .../..
+cd ../..
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true
+y
+nano src/app/app.module.ts 
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true
+cd ..
+ls
+git pull
+cd ArtieC-Client/
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true
+y
+nano src/app/app.module.ts 
+CAT src/app/app.module.ts 
+cat src/app/app.module.ts 
+cd ..
+ls
+git status
+git add .
+git commit -m "inplace edits"
+git config --global user.email "jazz405@gmail.com"
+git config --global user.name "jacob"
+git commit -m "inplace edits"
+git status
+git push
+git pull
+cd ArtieC-Client/
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy proxy.config.json
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/ proxy.config.json
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/proxy.config.json
+y
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/proxy.config.json
+y
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true 
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/proxy.config.json
+y
+ls
+nano src/proxy.config.json 
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/proxy.config.json
+y
+nano src/proxy.config.json 
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true --proxy-config src/proxy.config.json
+ng serve --port 8080 --host 0.0.0.0 --ssl true --disableHostCheck true
+ls
+ping localhost:8888
+search localhost:8888
+ping
+ping http://localhost:8888
+curl -v
+curl https://localhost:8888
+curl -k https://localhost:8888
+curl -k wss://0.0.0.0:8888/socket.io/?EIO=3&transport=websocket
+curl  wss://0.0.0.0:8888/socket.io/?EIO=3&transport=websocket
+cd Semaphore/
+npm start
+y
+cat src/main.ts 
+nano src/main.ts 
+npm start
+cat src/main.ts 
+ls
+cd src/
+ls
+cd asset/
+ls
+ll
+cd ..
+ls
+cd asset/
+ls
+cd ../..
+cp src/asset/cert.pem dist/asset/cert.pem
+cp src/asset/key.pem dist/asset/key.pem
+npm start
+cat src/main.ts 
+nano src/main.ts
+npm start
+nano src/main.ts
+npm start
+nano src/main.ts
+npm start
+nano src/main.ts 
+npm start
+nano src/main.ts 
+npm start
+y
+nano src/main.ts 
+npm start

@@ -1,7 +1,8 @@
 {
   "/signal/*": {
-    "target": "https://0.0.0.0:8888",
+    "target": "https://0.0.0.0:8888/signal",
     "secure": true,
-    "ws": true
+    "ws": true,
+    "logLevel": "debug"
   }
 }
