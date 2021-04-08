@@ -94,11 +94,13 @@ export class SignalGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() stream: any,
   ): void {
-    console.log('MEDIA');
+    console.log('MEDIA', stream);
     this.sttService.speechToText(stream, (data) => {
       //console.log('hello', data);
       console.log('otherHello', data.results[0].alternatives[0]);
-      client.broadcast.to(Object.keys(client.rooms)[1]).emit('message', {log: data.results[0].alternatives[0]});
+      client.broadcast
+        .to(Object.keys(client.rooms)[1])
+        .emit('message', { log: data.results[0].alternatives[0] });
     });
   }
 }

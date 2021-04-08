@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SocketService} from '../../services/socket.service';
 const { RTCPeerConnection, RTCSessionDescription } = window;
-// import {RTCPeerConnection} from 'wrtc';
+
+// @ts-ignore
+const ss = require('socket.io-stream');
 import RecordRTC from 'recordrtc';
 
 @Component({
@@ -37,7 +39,6 @@ export class ChatComponent implements OnInit {
     this.setupMedia();
     this.setupPeer();
     this.socket.listen('message').subscribe(async (data) => {
-      console.log('message', data);
       if (data.answer) {
         const remoteDesc = new RTCSessionDescription(data.answer);
         await this.peerConnection.setRemoteDescription(remoteDesc);
@@ -52,6 +53,8 @@ export class ChatComponent implements OnInit {
         } catch (e) {
           await this.peerConnection.addIceCandidate(data.candidate);
         }
+      } else if (data.log){
+        console.log( 'LOG', data.log);
       }
     });
 
@@ -64,18 +67,9 @@ export class ChatComponent implements OnInit {
         this.socket.send('candidate', {candidate: event.candidate});
       }
     };
-    this.peerConnection.oniceconnectionstatechange = (e) => {console.log('new icestatchange', e)};
-    this.peerConnection.addEventListener('iceconnectionstatechange' , event => {
-      console.log('connectionStateChange', event);
-    });
-
-    this.peerConnection.onconnectionstatechange = (e) => {
-      console.log('oh wow', e);
-    };
     this.peerConnection.addEventListener('connectionstatechange', event => {
       if (this.peerConnection.connectionState === 'connected') {
         console.log('connected', this.peerConnection);
-
       }
     });
   }
@@ -134,7 +128,10 @@ export class ChatComponent implements OnInit {
         // as soon as the stream is available
         ondataavailable(blob: any): void {
           if (me.peerConnection.connectionState === 'connected'){
-            me.socket.send('media', blob);
+            const ssStream = ss.createStream();
+            ss(this.socket).emit('media', ssStream, {name: 'stream.mp3', size: blob.size});
+            ss.createBlobReadStream(blob).pipe(ssStream);
+            // me.socket.send('media', blob);
           }
         }
       });
