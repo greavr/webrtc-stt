@@ -20,14 +20,15 @@ export class SttService {
     const recognizeStream = sttClient
       .streamingRecognize(sttRequest)
       .on('data', (data) => {
-        console.log('fuckind data', data.results[0].alternatives[0]);
+        console.log('received data', data.results[0].alternatives[0]);
+	// write to file hereish
         cb(data.results[0].alternatives[0]);
       })
       .on('error', (e: any) => {
         console.log('ERROR:', e);
       })
       .on('end', () => {
-        console.log('on end');
+        //console.log('stream end')
       });
 
     stream.pipe(recognizeStream);

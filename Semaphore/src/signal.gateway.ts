@@ -14,6 +14,7 @@ import { SttService } from './stt-service/stt-service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const speech = require('@google-cloud/speech');
 const sttClient = new speech.SpeechClient();
+const ss = require('socket.io-stream');
 
 @WebSocketGateway({ transports: ['websocket'], namespace: 'signal' })
 export class SignalGateway
@@ -30,6 +31,9 @@ export class SignalGateway
 
   handleConnection(client: Socket, ...args): any {
     this.logger.log('Connect', client.id);
+    ss(client).on('media', (stream, data) => {
+      this.handleMedia(client, stream, data)
+    })
   }
 
   handleDisconnect(client: Socket): any {
@@ -92,16 +96,16 @@ export class SignalGateway
   @SubscribeMessage('media')
   handleMedia(
     @ConnectedSocket() client: Socket,
-    @MessageBody() stream: any,
+    stream: any, 
+    data: any
   ): void {
-    console.log('MEDIA', stream);
-    this.sttService.speechToText(stream, (data) => {
-      //console.log('hello', data);
-      console.log('otherHello', data.results[0].alternatives[0]);
-      client.broadcast
-        .to(Object.keys(client.rooms)[1])
-        .emit('message', { log: data.results[0].alternatives[0] });
-    });
+    this.sttService.speechToText(stream, (data) => {     
+      if(data.confidence > 65){	
+        client.broadcast
+          .to(Object.keys(client.rooms)[1])
+          .emit('message', { log: data.transcript });
+      });
+    }
   }
 }
 

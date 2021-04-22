@@ -128,10 +128,11 @@ export class ChatComponent implements OnInit {
         // as soon as the stream is available
         ondataavailable(blob: any): void {
           if (me.peerConnection.connectionState === 'connected'){
-            const ssStream = ss.createStream();
-            ss(this.socket).emit('media', ssStream, {name: 'stream.mp3', size: blob.size});
-            ss.createBlobReadStream(blob).pipe(ssStream);
-            // me.socket.send('media', blob);
+	    console.log('peers  connected');
+            //const ssStream = ss.createStream();
+            //ss(me.socket).send('media', ssStream, {name: 'stream.mp3', size: blob.size});
+            //ss.createBlobReadStream(blob).pipe(ssStream);
+             me.socket.sendStream(blob);
           }
         }
       });
