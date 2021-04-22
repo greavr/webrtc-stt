@@ -104,8 +104,8 @@ export class SignalGateway
         client.broadcast
           .to(Object.keys(client.rooms)[1])
           .emit('message', { log: data.transcript });
-      });
-    }
+      }
+    });
   }
 }
 

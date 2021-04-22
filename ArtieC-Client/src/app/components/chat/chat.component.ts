@@ -99,7 +99,7 @@ export class ChatComponent implements OnInit {
       audio: true
     }).then((stream: MediaStream) => {
       // StereoAudioRecorder.isTypeSupported('audio/mpeg');
-      me.peerConnection.addTrack(stream.getAudioTracks()[0]);
+      me.peerConnection.addTrack(stream.getAudioTracks()[0], stream);
       me.recordAudio = RecordRTC(stream, {
         type: 'audio',
         mimeType: 'audio/wav',
