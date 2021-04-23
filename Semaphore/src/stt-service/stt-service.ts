@@ -33,7 +33,7 @@ export class SttService {
 
     stream.pipe(recognizeStream);
     stream.on('end', () => {
-      this.logger.log('STREAM ENDED');
+      //this.logger.log('STREAM ENDED');
     });
   }
 }

@@ -39,7 +39,7 @@ export class SocketService {
   }
 
   sendStream(blob:any,  fn?): void {
-    console.log('sendingStream');
+    //console.log('sendingStream');
     let stream = ss.createStream();
     ss(this.socket).emit('media', stream, {name: 'stream.mp3', size: blob.size})
     ss.createBlobReadStream(blob).pipe(stream);

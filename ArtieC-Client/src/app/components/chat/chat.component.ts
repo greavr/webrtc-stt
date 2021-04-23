@@ -24,8 +24,7 @@ export class ChatComponent implements OnInit {
   private peerConnection: RTCPeerConnection;
   private offer;
   recordAudio: any;
-
-  private uuid;
+  remoteStream = new MediaStream();
 
   constructor(private socket: SocketService) {
   }
@@ -36,8 +35,8 @@ export class ChatComponent implements OnInit {
     this.offer = await this.peerConnection.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false});
 
     await this.peerConnection.setLocalDescription(this.offer);
-    this.setupMedia();
     this.setupPeer();
+    //this.setupMedia();
     this.socket.listen('message').subscribe(async (data) => {
       if (data.answer) {
         const remoteDesc = new RTCSessionDescription(data.answer);
@@ -51,6 +50,7 @@ export class ChatComponent implements OnInit {
         try{
           await this.peerConnection.addIceCandidate(data.candidate);
         } catch (e) {
+	  console.log('technically an error');
           await this.peerConnection.addIceCandidate(data.candidate);
         }
       } else if (data.log){
@@ -70,13 +70,30 @@ export class ChatComponent implements OnInit {
     this.peerConnection.addEventListener('connectionstatechange', event => {
       if (this.peerConnection.connectionState === 'connected') {
         console.log('connected', this.peerConnection);
+	//this.setupMedia();
       }
     });
+   this.peerConnection.ontrack = ({track, streams}) => {
+      console.log('track?', track);
+      console.log('streams?', streams);
+   };
+   this.peerConnection.addEventListener('track', event => {
+     console.log('foundTrack', event);
+     //event.track.play()
+     //let audioELM = document.createElement('audio');   
+     //audioELM.src = URL.createObjectURL(event.streams);
+     //audioELM.play();
+     let audio = document.createElement('audio');
+     audio.srcObject = event.streams[0];
+     audio.play();
+     //this.remoteStream.addTrack(event.track);
+   });
   }
 
   async connectToRoom(): Promise<void> {
     this.socket.connect(this.chatForm.value);
     this.socket.send('offer', {offer: this.offer});
+    this.setupMedia();
     this.toggle = !this.toggle;
   }
 
@@ -85,21 +102,15 @@ export class ChatComponent implements OnInit {
     this.toggle = !this.toggle;
   }
 
-  createUuid(): string{
-    return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + this.s4() + this.s4();
-  }
-
-  s4(): any {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-
   setupMedia(): void {
     const me = this;
     navigator.mediaDevices.getUserMedia({
       audio: true
     }).then((stream: MediaStream) => {
+      //console.log('right here is the thing');
       // StereoAudioRecorder.isTypeSupported('audio/mpeg');
-      me.peerConnection.addTrack(stream.getAudioTracks()[0], stream);
+      console.log('tracks', stream.getAudioTracks());
+      me.peerConnection.addTrack(stream.getAudioTracks()[0], stream); 
       me.recordAudio = RecordRTC(stream, {
         type: 'audio',
         mimeType: 'audio/wav',
@@ -127,20 +138,15 @@ export class ChatComponent implements OnInit {
 
         // as soon as the stream is available
         ondataavailable(blob: any): void {
-          if (me.peerConnection.connectionState === 'connected'){
-	    console.log('peers  connected');
-            //const ssStream = ss.createStream();
-            //ss(me.socket).send('media', ssStream, {name: 'stream.mp3', size: blob.size});
-            //ss.createBlobReadStream(blob).pipe(ssStream);
+          if (me.peerConnection.connectionState === 'connected'){	    
              me.socket.sendStream(blob);
           }
         }
       });
       me.recordAudio.startRecording();
-      // recording started
-      // me.waveform.start(stream);
+     // me.peerConnection.addTrack(stream.getAudioTracks()[0], stream);
+     // console.log('peerTrack?', me.peerConnection);
     }).catch((error) => {
-      console.log('fuck', error);
       console.error(JSON.stringify(error));
     });
   }
