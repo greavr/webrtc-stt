@@ -18,6 +18,9 @@ export class ChatComponent implements OnInit {
     room: new FormControl(),
     user: new FormControl()
   });
+ ;
+  persons: string[] = ['jacob', 'heather', 'louis', 'rick'];
+ // options: string[] = ['One', 'Two', 'Three'];
   configuration: RTCConfiguration = {
     iceServers: [{ urls: 'stun:stun.1.google.com:19302' }]
   };
@@ -30,6 +33,8 @@ export class ChatComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+//    this.people = ['jacob', 'heather', 'louis', 'rick'];
+//    console.log('eople', this.people);
     this.toggle = false;
     this.peerConnection = new RTCPeerConnection(this.configuration);
     this.offer = await this.peerConnection.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false});

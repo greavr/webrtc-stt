@@ -2,3 +2,7 @@
   width:700px;
   height:150px;
 }
+
+::ng-deep .mat-input-element {
+  color: rgba(255,255,255,.7) !important;
+}

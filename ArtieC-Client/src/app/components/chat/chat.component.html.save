@@ -1,12 +1,12 @@
-<div fxFlex>
+<div fxFlexFill>
   <form [formGroup]="chatForm">
     <mat-form-field fxFlex="1 1 10%" >
       <mat-label>Room</mat-label>
-      <input matInput type="text" placeholder="test" formControlName="room" [matAutocomplete]="rooms">
+      <input matInput type="text" placeholder="test" formControlName="room">
     </mat-form-field>
     <mat-form-field >
       <mat-label>User</mat-label>
-      <input matInput formControlName="user" [matAutocomplete]="people">
+      <input matInput formControlName="user">
     </mat-form-field>
   </form>
   <div fxLayout="row" fxLayoutAlign="space-around center">
@@ -16,11 +16,3 @@
 </div>
 
 
-<mat-autocomplete #rooms="matAutocomplete">
-  <mat-option [value]="'kitchen'"> Kitchen </mat-option>
-</mat-autocomplete>
-<mat-autocomplete #people="matAutocomplete">
-  <mat-option *ngFor="let person of persons" [value]="person">
-    {{person}}
-  </mat-option>
-</mat-autocomplete>
