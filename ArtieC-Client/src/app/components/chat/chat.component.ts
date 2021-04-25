@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit {
   };
   private peerConnection: RTCPeerConnection;
   private offer;
+  audio;
   recordAudio: any;
   remoteStream = new MediaStream();
   localStream;
@@ -42,11 +43,10 @@ export class ChatComponent implements OnInit {
           const remoteDesc = new RTCSessionDescription(data.answer);
           await this.peerConnection.setRemoteDescription(remoteDesc);
 	} catch (e) {
-	  console.log('answer', e);
+	  console.log('answerError', e);
 	}
       } else if (data.offer){
         try{
-          console.log('in offer');
 	  await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
           const answer = await  this.peerConnection.createAnswer();
           await  this.peerConnection.setLocalDescription(answer);
@@ -58,54 +58,51 @@ export class ChatComponent implements OnInit {
         try{
           await this.peerConnection.addIceCandidate(data.candidate);
         } catch (e) {
-	  console.log('technically an error');
           await this.peerConnection.addIceCandidate(data.candidate);
         }
       } else if (data.log){
-        console.log( 'LOG', data.log);
+        console.log('LOG', data.log);
       }
     });
-
   }
 
   // tslint:disable-next-line:typedef
   async setupPeer() {
-    //this.peerConnection = new RTCPeerConnection(this.configuration);
-    //this.offer = await this.peerConnection.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false});
-    //await this.peerConnection.setLocalDescription(this.offer);
-
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        //console.log('candidate', event.candidate);
         this.socket.send('candidate', {candidate: event.candidate});
       }
     };
     this.peerConnection.addEventListener('connectionstatechange', event => {
-      //console.log('stateChange', (event.target as RTCPeerConnection).connectionState);
       if ((event.target as RTCPeerConnection).connectionState === 'connecting'){
         console.log('connecting', event.target);
       } else if (this.peerConnection.connectionState === 'connected') {
         console.log('connected', event.target);
+        if(!this.localStream){
+	  this.setupMedia();
+	}
       } else if (this.peerConnection.connectionState === 'closed') {
         console.log('closed', this.peerConnection);
       } else if ((event.target as RTCPeerConnection).connectionState === 'failed'){
         console.log('failed');
-      } 
+      } else if (this.peerConnection.iceConnectionState === 'disconnected'){
+        console.log('disconnected');
+      }
     });
    this.peerConnection.addEventListener('track', event => {
-     console.log('foundTrack', event);
-     let audio = document.createElement('audio');
-     audio.srcObject = event.streams[0];
-     audio.play();
+     if(!this.audio){
+       this.audio = document.createElement('audio');
+     }
+     this.audio.srcObject = event.streams[0];
+     this.audio.play();
    });
    this.peerConnection.onnegotiationneeded = async (e) => {
-     console.log('negotiation needed', e.target);
      if(this.peerConnection.connectionState == 'connecting'){
-       console.log('tryign to connect', e);
+       console.log('connecting');
      } else if((e.target as RTCPeerConnection).connectionState == 'new') {      
-       console.log('new client', e.target)
+       console.log('new client')
      } else if((e.target as RTCPeerConnection).connectionState == 'failed') {
-       console.log(' failed');
+       console.log('failed');
      } else if ((e.target as RTCPeerConnection).connectionState == 'connected') {
        console.log('renegotiateConnected client');
        await this.newOffer();
@@ -115,6 +112,9 @@ export class ChatComponent implements OnInit {
   }
 
   async newOffer(){
+   if(this.peerConnection.signalingState === 'closed'){
+     this.peerConnection = new RTCPeerConnection(this.configuration);
+   }
    this.offer = await this.peerConnection.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false});
    await this.peerConnection.setLocalDescription(this.offer);
   }
@@ -123,26 +123,30 @@ export class ChatComponent implements OnInit {
     await this.newOffer();
     this.socket.connect(this.chatForm.value);
     this.socket.send('offer', {offer: this.offer});
-    await this.setupMedia();
-    //console.log('pc', this.peerConnection);
     this.toggle = !this.toggle;
   }
 
-  disconnect(): void{
+  async disconnect(): Promise<void>{
+    if(this.recordAudio){
+      this.recordAudio.stopRecording();
+    }
+    if(this.audio){
+      this.audio.srcObject = null;
+    }
     this.recordAudio.stopRecording()
     this.localStream.getTracks().forEach((track) => track.stop());
-    //this.peerConnection.close()    
     this.setupPeer();   
+    this.peerConnection.close();
     this.socket.disconnect();
     this.toggle = !this.toggle;
   }
 
-  async  setupMedia() {
+  async setupMedia(): Promise<void> {
     const me = this;
-    navigator.mediaDevices.getUserMedia({
+    let media = navigator.mediaDevices.getUserMedia({
       audio: true
-    }).then((stream: MediaStream) => {
-      me.peerConnection.addTrack(stream.getAudioTracks()[0], stream); 
+   }).then((stream: MediaStream) => {
+      me.peerConnection.addTrack(stream.getAudioTracks()[0], stream);
       me.localStream = stream;
       me.recordAudio = RecordRTC(stream, {
         type: 'audio',
