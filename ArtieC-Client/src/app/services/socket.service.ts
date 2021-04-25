@@ -21,7 +21,7 @@ export class SocketService {
   }
 
   disconnect(): void{
-    this.socket.emit('leave', (response) => {
+    this.socket.emit('leave',  (response) => {
       console.log('response', response);
     });
   }
