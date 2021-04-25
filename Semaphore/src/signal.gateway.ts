@@ -54,7 +54,6 @@ export class SignalGateway
   @SubscribeMessage('leave')
   async handleLeave(@ConnectedSocket() client: Socket): Promise<void> {
     try {
-      // @ToDo - Clean this up?
       await client.leave(Object.keys(client.rooms)[1]);
     } catch (e) {
       console.log('Unable to leave the room', e);
