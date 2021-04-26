@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/purple-green.css';
+body{
+    background-color: rgb(48, 48, 48);
+}
+
+input:-internal-autofill-selected{
+	background-color: rgb(48, 48, 48);
+}
+
+input:-webkit-autofill{
+	background-color:yellow !important;
+}
