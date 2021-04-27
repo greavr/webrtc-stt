@@ -10,7 +10,9 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { SttService } from './stt-service/stt-service';
+import { SttService } from '../stt-service/stt-service';
+import { PeerService } from './peer.service';
+import { RTCPeerConnection, RTCSessionDescription } from 'wrtc';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const speech = require('@google-cloud/speech');
 const sttClient = new speech.SpeechClient();
@@ -21,6 +23,8 @@ export class SignalGateway
   implements OnGatewayInit, OnGatewayDisconnect, OnGatewayConnection {
   private logger: Logger = new Logger('SignalGateway');
   private sttService: SttService = new SttService();
+  private peerService: PeerService = new PeerService();
+  pairs = [];
 
   @WebSocketServer()
   server: Server;
@@ -41,10 +45,14 @@ export class SignalGateway
   }
 
   @SubscribeMessage('join')
-  handleJoin(@ConnectedSocket() client: Socket, @MessageBody() data: Options) {
+  async handleJoin(@ConnectedSocket() client: Socket, @MessageBody() data: Options) {
     try {
       client.join(data.room);
+      let peer = await this.peerService.newPeer();
+      this.pairs.push({id:[client.id], peer: await peer})
       this.logger.log(`${data.user} join the ${data.room}`);
+      //let offer = await this.peerService.newOffer(peer);
+      //client.emit('message', {offer: await offer});
     } catch (e) {
       console.log('error', e);
       return `Unable to join the ${data.room}`;
@@ -61,25 +69,41 @@ export class SignalGateway
   }
 
   @SubscribeMessage('candidate')
-  handleCandidate(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async handleCandidate(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+    let peer = this.pairs.find(x => x.id == client.id).peer;
+    peer.onicecandidate = (event) => {
+      if(event.candidate){
+        client.emit('message', {candidate: event.candidate});
+      }
+    }
     try {
-      // @ToDo - Clean this up?
-      client.broadcast
-        .to(Object.keys(client.rooms)[1])
-        .emit('message', { candidate: data.candidate });
+      //console.log('handling Candidate', data.candidate)
+      //if(data.candidate){
+        //console.log('handling candidate')
+        //await this.peerService.addIceCandidate(peer, client, data.candidate);
+      //}
+      //await this.peerService.addIceCandidate(peer, client, data.candidate);
+      await peer.addIceCandidate(data.candidate);
     } catch (e) {
       console.log('Unable to leave the room', e);
+      //await this.peerService.addIceCandidate(peer, client, data.candidate); 
+      await peer.addIceCandidate(data.candidate);
     }
   }
 
   @SubscribeMessage('offer')
-  handleOffer(
+  async handleOffer(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
-  ): void {
-    client.broadcast
-      .to(Object.keys(client.rooms)[1])
-      .emit('message', { offer: data.offer });
+  ) {
+      
+      let peer = this.pairs.find(x => x.id == client.id).peer;    
+      await peer.setRemoteDescription(new RTCSessionDescription(data.offer));
+      console.log('options', this.peerService.options);
+      let answer = await peer.createAnswer(this.peerService.options);
+      await peer.setLocalDescription(await answer);
+      client.emit('message', {answer: await answer});
+      //client.emit('message', { offer: data.offer });
   }
 
   @SubscribeMessage('answer')
@@ -87,9 +111,9 @@ export class SignalGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ): void {
-    client.broadcast
-      .to(Object.keys(client.rooms)[1])
-      .emit('message', { answer: data.answer });
+     let peer = this.pairs.find(x => x.id == client.id).peer;
+     peer.setRemoteDescription(data.answer);
+//    client.emit('message', { answer: data.answer });
   }
 
   @SubscribeMessage('media')
@@ -100,9 +124,7 @@ export class SignalGateway
   ): void {
     this.sttService.speechToText(stream, (data) => {     
       if(data.confidence > 65){	
-        client.broadcast
-          .to(Object.keys(client.rooms)[1])
-          .emit('message', { log: data.transcript });
+        client.emit('message', { log: data.transcript });
       }
     });
   }
