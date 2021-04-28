@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { PeerService } from './peer.services';
+import { PeerService } from './peer.service';
 import { SttService } from '../stt-service/stt-service';
 import { RTCPeerConnection, RTCSessionDescription } from 'wrtc';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -76,10 +76,11 @@ export class SignalGateway
   ) {
     try {
       // @ToDo - Clean this up?
-      console.log('candidate found');
+      //console.log('candidate', data.candidate);
       const peer = await this.pairs.find((x) => x.id == client.id).peer;
       peer.onicecandidate = (event) => {
         if (event.candidate) {
+          console.log('out candidate', event.candidate);
           client.emit('message', { candidate: event.candidate });
         }
       };
