@@ -10,12 +10,17 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+<<<<<<< HEAD:witness-demo/server/src/wss/signal.gateway.ts
 import { PeerService } from './peer.services';
 import { SttService } from '../stt-service/stt-service';
+import { RTCSessionDescription } from 'wrtc';
+=======
+import { SttService } from '../stt-service/stt-service';
+import { PeerService } from './peer.service';
 import { RTCPeerConnection, RTCSessionDescription } from 'wrtc';
+>>>>>>> b20c56218660ae72e1fbee190203f27104943b6d:witness-demo/server/src/wss/signal.gateway.ts.save
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const speech = require('@google-cloud/speech');
-const sttClient = new speech.SpeechClient();
+
 const ss = require('socket.io-stream');
 
 @WebSocketGateway({ transports: ['websocket'], namespace: 'signal' })
@@ -45,12 +50,11 @@ export class SignalGateway
   }
 
   @SubscribeMessage('join')
-  async handleJoin(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: Options,
-  ) {
+  async handleJoin(@ConnectedSocket() client: Socket, @MessageBody() data: Options) {
     try {
       client.join(data.room);
+      this.pairs.push({id:[client.id], peer: await this.peerService.newPeer()})
+      //console.log('pairs', this.pairs);
       this.logger.log(`${data.user} join the ${data.room}`);
       const peer = await this.peerService.newPeer();
       this.pairs.push({ id: [client.id], peer: await peer });
@@ -70,35 +74,47 @@ export class SignalGateway
   }
 
   @SubscribeMessage('candidate')
-  async handleCandidate(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: any,
-  ) {
+  async handleCandidate(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     try {
       // @ToDo - Clean this up?
+<<<<<<< HEAD:witness-demo/server/src/wss/signal.gateway.ts
       console.log('candidate found');
       const peer = await this.pairs.find((x) => x.id == client.id).peer;
       peer.onicecandidate = (event) => {
         if (event.candidate) {
-          client.emit('message', { candidate: event.candidate });
+          client.emit('message', { candidate: event.candidate});
         }
       };
       await peer.addIceCandidate(data.candidate);
+=======
+      //client.emit('message', { candidate: data.candidate });
+      let peer = this.pairs.find(x => x.id == client.id).peer;
+      await peer.addIceCandidate(data.candidate);
+      console.log('candidate?');
+>>>>>>> b20c56218660ae72e1fbee190203f27104943b6d:witness-demo/server/src/wss/signal.gateway.ts.save
     } catch (e) {
       console.log('Unable to leave the room', e);
     }
   }
-
   @SubscribeMessage('offer')
   async handleOffer(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ) {
+<<<<<<< HEAD:witness-demo/server/src/wss/signal.gateway.ts
     const peer = await this.pairs.find((x) => x.id == client.id).peer;
     await peer.setRemoteDescription(new RTCSessionDescription(data.offer));
     const answer = await peer.createAnswer();
     await peer.setLocalDescription(answer);
     client.emit('message', { answer: answer });
+=======
+    let peer = this.pairs.find(x => x.id == client.id);
+    await peer.SetRemoteDescription(new RTCSessionDescription(data.offer));
+    let answer = await peer.createAnswer();
+    await peer.setLocalDescription(answer);
+    client.emit('message', {answer});
+    //client.emit('message', { offer: data.offer });
+>>>>>>> b20c56218660ae72e1fbee190203f27104943b6d:witness-demo/server/src/wss/signal.gateway.ts.save
   }
 
   @SubscribeMessage('answer')
@@ -106,18 +122,31 @@ export class SignalGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: any,
   ): void {
+<<<<<<< HEAD:witness-demo/server/src/wss/signal.gateway.ts
     console.log('answer received');
-    const peer = this.pairs.find((x) => x.id == client.id).peer;
-    peer.setRemoteDescription(data.answer);
+=======
+>>>>>>> b20c56218660ae72e1fbee190203f27104943b6d:witness-demo/server/src/wss/signal.gateway.ts.save
+    client.emit('message', { answer: data.answer });
   }
 
   @SubscribeMessage('media')
+<<<<<<< HEAD:witness-demo/server/src/wss/signal.gateway.ts
   handleMedia(@ConnectedSocket() client: Socket, stream: any, data: any): void {
     this.sttService.speechToText(stream, (data) => {
       if (data.confidence > 65) {
         client.broadcast
           .to(Object.keys(client.rooms)[1])
           .emit('message', { log: data.transcript });
+=======
+  handleMedia(
+    @ConnectedSocket() client: Socket,
+    stream: any, 
+    data: any
+  ): void {
+    this.sttService.speechToText(stream, (data) => {     
+      if(data.confidence > 65){	
+        client.emit('message', { log: data.transcript });
+>>>>>>> b20c56218660ae72e1fbee190203f27104943b6d:witness-demo/server/src/wss/signal.gateway.ts.save
       }
     });
   }
