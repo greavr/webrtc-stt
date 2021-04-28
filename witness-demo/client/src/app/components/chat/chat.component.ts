@@ -20,7 +20,10 @@ export class ChatComponent implements OnInit {
   });
   persons: string[] = ['jacob', 'heather', 'louis', 'rick'];
   configuration: RTCConfiguration = {
-    iceServers: [{ urls: 'stun:stun.1.google.com:19302' }]
+    iceServers: [{ urls: 'stun:stun.1.google.com:19302' }],
+    //minPort: '60000', 
+    //maxPort: '61000'
+    //iceTransportPolicy: "relay",
   };
   private peerConnection: RTCPeerConnection;
   private offer;
@@ -57,7 +60,7 @@ export class ChatComponent implements OnInit {
           console.log('offerError', e);
         }
       } else if (data.candidate) {
-        console.log('in candidate');
+        //console.log('in candidate', data.candidate);
         try {
             await this.peerConnection.addIceCandidate(data.candidate);
           } catch (e) {
@@ -73,8 +76,13 @@ export class ChatComponent implements OnInit {
   // tslint:disable-next-line:typedef
   async setupPeer() {
     this.peerConnection.onicecandidate = (event) => {
+      //if(event.candidate && this.peerConnection.remoteDescription){
+      //}
       if (event.candidate) {
-        console.log('client candidate', event.candidate);
+        if(this.peerConnection.remoteDescription){
+          console.log('hvae remote');
+	}
+        console.log('out candidate', event.candidate);
         this.socket.send('candidate', {candidate: event.candidate});
       }
     };

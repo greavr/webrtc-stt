@@ -40,6 +40,7 @@ export class ChatComponent implements OnInit {
     this.socket.listen('message').subscribe(async (data) => {
       if (data.answer) {
         try {
+          console.log('answer received');
           const remoteDesc = new RTCSessionDescription(data.answer);
           await this.peerConnection.setRemoteDescription(remoteDesc);
 	} catch (e) {
@@ -56,6 +57,7 @@ export class ChatComponent implements OnInit {
         }
       } else if (data.candidate) {
         try{
+          console.log('candidate', data.candidate);
           await this.peerConnection.addIceCandidate(data.candidate);
         } catch (e) {
           await this.peerConnection.addIceCandidate(data.candidate);
