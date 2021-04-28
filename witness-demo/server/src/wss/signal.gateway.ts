@@ -50,6 +50,7 @@ export class SignalGateway
     @MessageBody() data: Options,
   ) {
     try {
+      // If this is the first user in a room, create a Witness
       client.join(data.room);
       this.logger.log(`${data.user} join the ${data.room}`);
       const peer = await this.peerService.newPeer();
