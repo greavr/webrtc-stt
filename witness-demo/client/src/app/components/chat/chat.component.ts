@@ -40,6 +40,7 @@ export class ChatComponent implements OnInit {
     this.socket.listen('message').subscribe(async (data) => {
       if (data.answer) {
         try {
+          console.log('answer received');
           const remoteDesc = new RTCSessionDescription(data.answer);
           await this.peerConnection.setRemoteDescription(remoteDesc);
 	} catch (e) {
@@ -47,6 +48,7 @@ export class ChatComponent implements OnInit {
 	}
       } else if (data.offer){
         try{
+          console.log('offer received');
 	  await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
           const answer = await  this.peerConnection.createAnswer();
           await  this.peerConnection.setLocalDescription(answer);
@@ -55,11 +57,13 @@ export class ChatComponent implements OnInit {
           console.log('offerError', e);
         }
       } else if (data.candidate) {
-        try{
-          await this.peerConnection.addIceCandidate(data.candidate);
-        } catch (e) {
-          await this.peerConnection.addIceCandidate(data.candidate);
-        }
+        console.log('in candidate')
+          try {
+            await this.peerConnection.addIceCandidate(data.candidate);
+          } catch (e) {
+            console.log('test');
+            await this.peerConnection.addIceCandidate(data.candidate);
+          }
       } else if (data.log){
         console.log('LOG', data.log);
       }
@@ -77,10 +81,10 @@ export class ChatComponent implements OnInit {
       if ((event.target as RTCPeerConnection).connectionState === 'connecting'){
         console.log('connecting', event.target);
       } else if (this.peerConnection.connectionState === 'connected') {
-        console.log('connected', event.target);
+        console.log('connected', event);
         if(!this.localStream){
-	  this.setupMedia();
-	}
+          this.setupMedia();
+        }
       } else if (this.peerConnection.connectionState === 'closed') {
         console.log('closed', this.peerConnection);
       } else if ((event.target as RTCPeerConnection).connectionState === 'failed'){
@@ -99,7 +103,7 @@ export class ChatComponent implements OnInit {
    this.peerConnection.onnegotiationneeded = async (e) => {
      if(this.peerConnection.connectionState == 'connecting'){
        console.log('connecting');
-     } else if((e.target as RTCPeerConnection).connectionState == 'new') {      
+     } else if((e.target as RTCPeerConnection).connectionState == 'new') {
        console.log('new client')
      } else if((e.target as RTCPeerConnection).connectionState == 'failed') {
        console.log('failed');
@@ -107,7 +111,7 @@ export class ChatComponent implements OnInit {
        console.log('renegotiateConnected client');
        await this.newOffer();
        this.socket.send('offer', {offer: this.offer});
-     } 
+     }
    }
   }
 
@@ -135,7 +139,7 @@ export class ChatComponent implements OnInit {
     }
     this.recordAudio.stopRecording()
     this.localStream.getTracks().forEach((track) => track.stop());
-    this.setupPeer();   
+    this.setupPeer();
     this.peerConnection.close();
     this.socket.disconnect();
     this.toggle = !this.toggle;
@@ -175,7 +179,7 @@ export class ChatComponent implements OnInit {
 
         // as soon as the stream is available
         ondataavailable(blob: any): void {
-          if (me.peerConnection.connectionState === 'connected'){	    
+          if (me.peerConnection.connectionState === 'connected'){
              me.socket.sendStream(blob);
           }
         }

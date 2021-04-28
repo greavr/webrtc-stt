@@ -12,8 +12,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 const config: SocketIoConfig = {
  //  url: 'https://0.0.0.0:8888/signal',
-  url: 'https://35.247.61.205:8888/signal',
- // url: 'https://0.0.0.0:8888/signal',
+  //url: 'https://35.247.61.205:8888/signal',
+  url: 'https://localhost:8888/signal',
   options: {
     transports: ['websocket'],
   }
